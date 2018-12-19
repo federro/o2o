@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +24,13 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itianyi.myo2o.dto.ShopExecution;
+import com.itianyi.myo2o.entity.Area;
 import com.itianyi.myo2o.entity.PersonInfo;
 import com.itianyi.myo2o.entity.Shop;
+import com.itianyi.myo2o.entity.ShopCategory;
 import com.itianyi.myo2o.enums.ShopStateEnum;
+import com.itianyi.myo2o.service.AreaService;
+import com.itianyi.myo2o.service.ShopCategoryService;
 import com.itianyi.myo2o.service.ShopService;
 import com.itianyi.myo2o.util.HttpServletRequestUtil;
 import com.itianyi.myo2o.util.ImageUtil;
@@ -36,6 +42,31 @@ public class ShopManagenmentController {
 	
 	@Autowired
 	private ShopService shopService;
+	@Autowired
+	private ShopCategoryService shopCategoryService;
+	@Autowired
+	private AreaService areaService;
+	
+	@RequestMapping(value="/getshopinitinfo",method=RequestMethod.GET)
+	@ResponseBody
+	private Map<String,Object> getShopInitInfo(){
+		Map<String,Object> modelMap = new HashMap<String,Object>();
+		List<ShopCategory> shopCategoryList = new ArrayList<ShopCategory>();
+		List<Area> areaList = new ArrayList<Area>();
+		try{
+			shopCategoryList = shopCategoryService.getShopCategoryList(new ShopCategory());
+			areaList = areaService.getAreaList();
+			modelMap.put("shopCategoryList", shopCategoryList);
+			modelMap.put("areaList", areaList);
+			modelMap.put("success", true);
+		}catch(Exception e){
+			modelMap.put("success", false);
+			modelMap.put("errMsg", e.getMessage());
+		}
+		
+		return modelMap;
+	}
+	
 	@RequestMapping(value="/registershop",method=RequestMethod.POST)
 	@ResponseBody
 	private Map<String, Object> registerShop(HttpServletRequest request){
@@ -46,6 +77,7 @@ public class ShopManagenmentController {
 		ObjectMapper mapper = new ObjectMapper();
 		Shop shop = null;
 		try{
+			//JSON to SHOP 的转换
 			shop = mapper.readValue(shopStr, Shop.class);
 		}catch(Exception e){
 			logger.debug("转换shopBean失败");
@@ -78,6 +110,8 @@ public class ShopManagenmentController {
 			
 			//模拟图片信息
 			CommonsMultipartFile multipartFile = ImageUtil.getMutiPartFile("126.jpg");
+			
+			
 			ShopExecution se = 	shopService.addShop(shop, multipartFile);
 			if(se.getState() == ShopStateEnum.CHECK.getState()){
 				modelMap.put("success",true);
