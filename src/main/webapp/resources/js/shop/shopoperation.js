@@ -2,8 +2,8 @@
  * 
  */
 $(function(){
-	var initUrl = '/o2o/shopadmin/getshopinitinfo';
-	var registerShopUrl = '/o2o/shopadmin/registershop'
+	var initUrl = '../shopadmin/getshopinitinfo';
+	var registerShopUrl = '../shopadmin/registershop';
 		getShopInitInfo();
 	function getShopInitInfo(){
 		$.getJSON(initUrl,function(data){
@@ -36,14 +36,23 @@ $(function(){
 					}).data('id')
 			};
 			shop.area = {
-				areaId : $('#shop-area').find('option').has(function(){
-					return this.selected;
+				areaId : $('#shop-area').find('option').not(function(){
+					return !this.selected;
 				}).data('id')	
 			};
+			
 			var shopImg = $('#shop-img')[0].files[0];
 			var formData = new FormData();
 			formData.append('shopImg',shopImg);
 			formData.append('shopStr',JSON.stringify(shop));
+			
+			var verifyCodeActual = $('#j_captcha').val();
+			if(verifyCodeActual == null){
+				alert("请输入验证码！");
+				return;
+			}
+			formData.append('verifyCodeActual',verifyCodeActual);
+			
 			$.ajax({
 				url:registerShopUrl,
 				type:'POST',
@@ -52,11 +61,13 @@ $(function(){
 				processData:false,
 				cache:false,
 				success:function(data){
+					//后台一定要有一个success的属性，其值为true或者false
 					if(data.success){
-						$.toast('提交成功！');
+						alert('提交成功！');
 					}else{
-						$.toast('提交失败' + data.errMsg);
+						alert('提交失败' + data.errMsg);
 					}
+					$('#captcha_img').click();
 				}
 			})
 		});

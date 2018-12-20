@@ -32,6 +32,7 @@ import com.itianyi.myo2o.enums.ShopStateEnum;
 import com.itianyi.myo2o.service.AreaService;
 import com.itianyi.myo2o.service.ShopCategoryService;
 import com.itianyi.myo2o.service.ShopService;
+import com.itianyi.myo2o.util.CodeUtil;
 import com.itianyi.myo2o.util.HttpServletRequestUtil;
 import com.itianyi.myo2o.util.ImageUtil;
 
@@ -72,8 +73,18 @@ public class ShopManagenmentController {
 	private Map<String, Object> registerShop(HttpServletRequest request){
 		//1接收并转化相应的信息；
 		Map<String, Object> modelMap = new HashMap<String, Object>();
+		//接受请求的验证码，如果不对，则返回错误信息
+		
+		if(!CodeUtil.checkVerifyCode(request)){
+			modelMap.put("success",false);
+			modelMap.put("errMsg", "验证码输入错误");
+			return modelMap;
+		}
+		
+		
 		//与前端商讨好字符名称
 		String shopStr = HttpServletRequestUtil.getString(request,"shopStr");
+		//前端传过来字段名称，要与bean的属性名称一致。
 		ObjectMapper mapper = new ObjectMapper();
 		Shop shop = null;
 		try{
@@ -104,15 +115,14 @@ public class ShopManagenmentController {
 			//越少依赖前端信息越好
 			//等于是在这里模拟一下传入的商店信息和图片信息
 			//等于是第一步的数据没有用到，这里纯属模拟
-			PersonInfo personInfo = new PersonInfo();
-			personInfo.setUserId(10L);
-			shop.setOwnerId(10L);
+			shop.setOwnerId(9L);
 			
 			//模拟图片信息
-			CommonsMultipartFile multipartFile = ImageUtil.getMutiPartFile("126.jpg");
+//			CommonsMultipartFile multipartFile = ImageUtil.getMutiPartFile("126.jpg");
 			
 			
-			ShopExecution se = 	shopService.addShop(shop, multipartFile);
+//			ShopExecution se = 	shopService.addShop(shop, multipartFile);
+			ShopExecution se = 	shopService.addShop(shop, shopImg);
 			if(se.getState() == ShopStateEnum.CHECK.getState()){
 				modelMap.put("success",true);
 			}else{

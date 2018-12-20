@@ -41,7 +41,7 @@
 								<div class="item-inner">
 									<div class="item-title label">商铺名称</div>
 									<div class="item-input">
-										<input type="text" id="shop-Name" placeholder="商铺名称">
+										<input type="text" id="shop-name" placeholder="商铺名称">
 									</div>
 								</div>
 							</div>
@@ -95,7 +95,7 @@
 							</div>
 						</li>
 						<!-- 联系电话 text -->
-											<li>
+						<li>
 							<div class="item-content">
 								<div class="item-media">
 									<i class="icon icon-form-name"></i>
@@ -138,7 +138,24 @@
 						</li>
 						<!-- 验证码 kaptcha -->
 						<!-- TODO -->
-					
+
+						<li>
+							<div class="item-content">
+								<div class="item-media">
+									<i class="icon icon-form-email"></i>
+								</div>
+								<div class="item-inner">
+									<label for="j_captcha" class="item-title label">验证码</label> <input
+										id="j_captcha" name="j_captcha" type="text"
+										class="form-control in" placeholder="验证码" />
+									<div class="item-input">
+										<img id="captcha_img" alt="点击更换" title="点击更换"
+											onclick="changeVerifyCode(this)" src="../kaptcha" />
+									</div>
+								</div>
+							</div>
+						</li>
+
 					</ul>
 				</div>
 				<div class="content-block">
@@ -160,5 +177,6 @@
     <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
 	<!-- 这里直接从WEB-INF根目录上退回 -->
 	<script type='text/javascript' src='../resources/js/shop/shopoperation.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../resources/js/common/common.js' charset='utf-8'></script>
 </body>
 </html>
